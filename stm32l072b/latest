@@ -1,0 +1,19 @@
+var document = require("document");
+var log = require("log");
+
+log.setLevel("info");
+var queryParameters = {
+    
+    "query": 'temperature is not null and pressure is not null and type = "stm32l072b"',
+    "fields": "temperature, pressure, humidity, batteryLevel",
+    "resultsPerPage": 1
+};
+
+var resp = document.query(queryParameters);
+if (resp.metadata.status == "failure") {
+    
+    log.error(JSON.stringify(resp));
+    return {}
+}
+
+return resp.result.documents[0];
