@@ -1,0 +1,3 @@
+var appsKey = "YOUR APPS KEY HERE";
+var nwksKey = "YOUR NETWORK KEY HERE"; // optional
+var url = "https://lorawan-packet-decoder-0ta6puiniaut.runkit.sh";
