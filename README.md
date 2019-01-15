@@ -6,7 +6,7 @@ The application persists the data and publishes latest and last 10 historical va
 # Pre-requisites
 
 1. [Sign-up for a (free) scriptr.io account](https://www.scriptr.io/register)
-2. Connect your scriptr.io account to Github using the instructions described [here](https://github.com/scriptrdotio/howto/blob/master/teamwork/version_control.md#connecting-your-scriptr-account-to-github)
+2. Connect your scriptr.io account to Github using the instructions listed [here](https://github.com/scriptrdotio/howto/blob/master/teamwork/version_control.md#connecting-your-scriptr-account-to-github)
 
 # How to install
 
@@ -31,7 +31,7 @@ Click Install once done. This will import all the scripts to your workspace.
 - Optionally, you can specify a sub-domain name for your scriptr.io account 
 - In the tree view on the left, open the /stm32l072b/installer/install script then click Run. This will configure your account as needed
 
-# About the scripts:
+# About the scripts
 
 - ingest: receives data sent by the gateway. It can decrypt the data in case it is declared as encrypted
 - latest: returns the latest recorded metrics (temperature, humidity, pressure, battery level)
