@@ -16,7 +16,7 @@ Import the stm32l072b scripts into your workspace as follows:
 
 - Click on the arrow near +New Script in the bottom-left corner of the screen and select Install module
 - Click on Add Custom Module from GitHub, then fill the fields of the Modules dialog:
-  - Owner: the Github username of the repository owner
+  - Owner: use scriptrdotio
   - Repository: set it to stm32l072b
   - Path: leave it empty
   - Branch: set it to master
