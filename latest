@@ -1,3 +1,9 @@
+/**
+ * Load latest known value of temperature, pressure, humidity and batteryLevel
+ * @module latest
+ * @return {Object} {temperature:tt, pressure:pp, humidity:hh, batteryLevel:ll}
+ */
+
 var document = require("document");
 var log = require("log");
 

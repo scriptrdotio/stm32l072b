@@ -1,3 +1,9 @@
+/**
+ * Load latest 10 records or temperature, pressure  and humidity, along with the recording date
+ * @module historical
+ * @return {Array} an array of {temperature:tt, pressure:pp, humidity:hh, creationDate:dd}
+ */
+
 var document = require("document");
 var log = require("log");
 
