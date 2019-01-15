@@ -39,6 +39,6 @@ Click Install once done. This will import all the scripts to your workspace.
 - dashboard: a simple dashboard that is automatically updated whenever data is received
 - config: configuration script, mainly contains the appsKey to use to decrypt data (only if needed)
 
--/installer/install: utility script to automatically configure your account
--/installer/storekeeper: a script that is scheduled to run automatically at regular intervals to clean-up your data store and avoir bloating it with too many records 
+- /installer/install: utility script to automatically configure your account
+- /installer/storekeeper: a script that is scheduled to run automatically at regular intervals to clean-up your data store and avoir bloating it with too many records 
  
