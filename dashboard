@@ -98,20 +98,20 @@
        
         vm.init = function() {
         }
-                vm.gaugeFormatData1 = function(data){
+                vm.gaugeFormatData8 = function(data){
                   return data.temperature;
                 }
-                vm.gaugeFormatData2 = function(data){
+                vm.gaugeFormatData9 = function(data){
                   return data.humidity;
                 }
-                vm.gaugeFormatData3 = function(data){
+                vm.gaugeFormatData10 = function(data){
                   return data.pressure;
                 }
-                vm.gaugeFormatData4 = function(data){
-                  return data.batteryLevel;
-                }
-                vm.lineFormatData5 = function(data){
+                vm.lineFormatData18 = function(data){
                   return data;
+                }
+                vm.gaugeFormatData16 = function(data){
+                  return data.batteryLevel;
                 }
      });
         	
@@ -134,7 +134,7 @@
 										api='stm32l072b/latest'
 										value-font-color='#999'
 										min='0'
-										max='40'
+										max='45'
 										hide-min-max='false'
 										hide-value='false'
 										show-inner-shadow='false'
@@ -166,8 +166,7 @@
 										counter='false'
 										http-method='GET'
 										symbol='Celsius'
-										data='null'
-                                  		on-format-data='vm.gaugeFormatData1'
+                                  		on-format-data='vm.gaugeFormatData8'
                            ></scriptr-gauge> </div>
                         </div>
                     </div>
@@ -215,7 +214,7 @@
 										counter='false'
 										http-method='GET'
 										symbol='%'
-                                  		on-format-data='vm.gaugeFormatData2'
+                                  		on-format-data='vm.gaugeFormatData9'
                            ></scriptr-gauge> </div>
                         </div>
                     </div>
@@ -231,7 +230,7 @@
 										api='stm32l072b/latest'
 										value-font-color='#999'
 										min='0'
-										max='200'
+										max='250'
 										hide-min-max='false'
 										hide-value='false'
 										show-inner-shadow='false'
@@ -262,23 +261,68 @@
 										pointer='false'
 										counter='false'
 										http-method='GET'
-                                  		on-format-data='vm.gaugeFormatData3'
+										symbol='dPa'
+                                  		on-format-data='vm.gaugeFormatData10'
                            ></scriptr-gauge> </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="myItem" gridster-item='{sizeX: 4, sizeY: 2, col: 0 , row: 1 }'>
+                    <div class="box">
+                        <div class="box-content">
+                          <div  style="height: 30px;" tooltip-placement="bottom" uib-tooltip="Line Chart" class="box-label">Line Chart</div>
+                          <div  style="height: calc(100% - 30px)" > <scriptr-chart
+										type='line'
+										boxLabel='Line Chart'
+										xkey='creationDate'
+										ykeys='["temperature", "pressure", "humidity"]'
+										labels='["temperature", "pressure", "humidity"]'
+										colors='["#FCC717","#38B9D6","#8ae234"]'
+										transport='wss'
+										msg-tag='historical'
+										data=''
+										grid-text-family='Source Sans Pro'
+										line-width='2'
+										point-size='3'
+										point-stroke-colors='["#fff"]'
+										ymax='auto'
+										ymin='auto 0'
+										smooth='true'
+										hide-hover='false'
+										parse-time='true'
+										xlabels='auto'
+										xlabel-angle='0'
+										goal-stroke-width='1'
+										goal-line-colors='["#666633","#999966","#cc6666","#663333"]'
+										event-stroke-width='1'
+										event-line-colors='["#005a04","#ccffbb","#3a5f0b","#005502"]'
+										axes='true'
+										grid='true'
+										grid-text-color='#888'
+										grid-text-size='12'
+										grid-text-weight='normal'
+										http-method='GET'
+										point-fill-colors='[null]'
+										goals='[null]'
+										events='[null]'
+										api='stm32l072b/historical'
+                                  		on-format-data='vm.lineFormatData18'
+                           ></scriptr-chart> </div>
                         </div>
                     </div>
                 </li>
                 <li class="myItem" gridster-item='{sizeX: 1, sizeY: 1, col: 3 , row: 0 }'>
                     <div class="box">
                         <div class="box-content">
-                          <div  style="height: 30px;" tooltip-placement="bottom" uib-tooltip="BatteryLevel" class="box-label">BatteryLevel</div>
+                          <div  style="height: 30px;" tooltip-placement="bottom" uib-tooltip="Battery Level" class="box-label">Battery Level</div>
                           <div  style="height: calc(100% - 30px)" > <scriptr-gauge
 										transport='wss'
-										boxLabel='BatteryLevel'
-										msg-tag='Battery Level'
+										boxLabel='Battery Level'
+										msg-tag='latest'
 										api='stm32l072b/latest'
 										value-font-color='#999'
 										min='0'
-										max='100'
+										max='254'
 										hide-min-max='false'
 										hide-value='false'
 										show-inner-shadow='false'
@@ -309,52 +353,8 @@
 										pointer='false'
 										counter='false'
 										http-method='GET'
-                                  		on-format-data='vm.gaugeFormatData4'
+                                  		on-format-data='vm.gaugeFormatData16'
                            ></scriptr-gauge> </div>
-                        </div>
-                    </div>
-                </li>
-                <li class="myItem" gridster-item='{sizeX: 4, sizeY: 2, col: 0 , row: 1 }'>
-                    <div class="box">
-                        <div class="box-content">
-                          <div  style="height: 30px;" tooltip-placement="bottom" uib-tooltip="Historical Data" class="box-label">Historical Data</div>
-                          <div  style="height: calc(100% - 30px)" > <scriptr-chart
-										type='line'
-										boxLabel='Historical Data'
-										xkey='creationDate'
-										ykeys='["temperature", "humidity", "pressure"]'
-										labels='["temperature", "humidity", "pressure"]'
-										colors='["#FCC717","#38B9D6","#ad7fa8"]'
-										transport='wss'
-										msg-tag='historical'
-										data=''
-										grid-text-family='Source Sans Pro'
-										line-width='2'
-										point-size='3'
-										point-stroke-colors='["#fff"]'
-										ymax='auto'
-										ymin='auto 0'
-										smooth='true'
-										hide-hover='false'
-										parse-time='true'
-										xlabels='auto'
-										xlabel-angle='0'
-										goal-stroke-width='1'
-										goal-line-colors='["#666633","#999966","#cc6666","#663333"]'
-										event-stroke-width='1'
-										event-line-colors='["#005a04","#ccffbb","#3a5f0b","#005502"]'
-										axes='true'
-										grid='true'
-										grid-text-color='#888'
-										grid-text-size='12'
-										grid-text-weight='normal'
-										http-method='GET'
-										point-fill-colors='[null]'
-										goals='[null]'
-										events='[null]'
-										api='stm32l072b/historical'
-                                  		on-format-data='vm.lineFormatData5'
-                           ></scriptr-chart> </div>
                         </div>
                     </div>
                 </li>
