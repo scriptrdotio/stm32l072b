@@ -48,7 +48,7 @@
    	 	wsClientProvider.setBaseUrl("wss://" + window.location.host + "/");   	 
         wsClientProvider.setToken($.urlParam("auth_token"));
         wsClientProvider.setPublishChannel("requestChannel");
-        wsClientProvider.setSubscribeChannel("responseChannel");
+        wsClientProvider.setSubscribeChannel("stm32l072b");
     }];
 
     var httpsConfig = ["httpClientProvider",function (httpClientProvider) {
