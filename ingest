@@ -66,7 +66,7 @@ try {
     document.save(event);
    
     // publish the data to the dashboard (target all widgets with message tag "latest")
-    var resp = publish("stm32l072b", {id:"latest", result:event}); 
+    publish("stm32l072b", {id:"latest", result:event}); 
     
     // read last historical 10 records (temperature, humidity, pressure) + corresponding date at which they were recorded
     var resp = document.query({fields:"pressure, temperature, humidity, creationDate", resultsPerPage:10}); 
