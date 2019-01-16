@@ -12,7 +12,7 @@ var config = require("../config");
 var log = require("log");
 log.setLevel("info");
 
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS = 3;
 const STORE_KEEPING_INTERVAL = 5; // in minutes
 
 var errors = 0;
@@ -29,13 +29,10 @@ try {
 // step 1: create the stm32l072b channel
 createChannel(config.stm32Channel, {subscribeACL: "anonymous", publishACL: "authenticated"});
 
-// step 2: subscribe the inject script to the channel
-subscribeScriptToChannel("stm32l072b/ingest", config.stm32Channel);
-
-// step 3: create a sub-domain
+// step 2: create a sub-domain
 createSubdomain("stm32l072b");
 
-// step 4: schedule the storekeeper to execute regularly
+// step 3: schedule the storekeeper to execute regularly
 scheduleStoreKeeper();
 
 if (errors > 0) {
