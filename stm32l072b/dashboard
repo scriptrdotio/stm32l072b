@@ -107,7 +107,7 @@
                 vm.gaugeFormatData10 = function(data){
                   return data.pressure;
                 }
-                vm.lineFormatData13 = function(data){
+                vm.lineFormatData18 = function(data){
                   return data;
                 }
                 vm.gaugeFormatData16 = function(data){
@@ -275,11 +275,11 @@
 										type='line'
 										boxLabel='Line Chart'
 										xkey='creationDate'
-										ykeys='["temperature", "pressure", "humidity", "creationDate"]'
-										labels='["temperature", "pressure", "humidity", "creationDate"]'
+										ykeys='["temperature", "pressure", "humidity"]'
+										labels='["temperature", "pressure", "humidity"]'
 										colors='["#FCC717","#38B9D6","#8ae234"]'
 										transport='wss'
-										msg-tag='chart'
+										msg-tag='historical'
 										data=''
 										grid-text-family='Source Sans Pro'
 										line-width='2'
@@ -306,7 +306,7 @@
 										goals='[null]'
 										events='[null]'
 										api='stm32l072b/historical'
-                                  		on-format-data='vm.lineFormatData13'
+                                  		on-format-data='vm.lineFormatData18'
                            ></scriptr-chart> </div>
                         </div>
                     </div>
