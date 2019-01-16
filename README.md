@@ -26,10 +26,37 @@ Click Install once done. This will import all the scripts to your workspace.
 
 # How to configure the application
 
+## Automatic configuration
+
 - In the tree view on the left, open the /stm32l072b/config script
 - Replace the value of the appsKey variable with the one used by the client application running on the stm32 device 
 - Optionally, you can specify a sub-domain name for your scriptr.io account 
 - In the tree view on the left, open the /stm32l072b/installer/install script then click Run. This will configure your account as needed
+
+## Manual configuration
+
+### Create the stm32l072b channel
+This channel is used by the dashboard to obtain real-time updates, published by the ingest script
+- Click on your username in the top-right corner of the workspace
+- Select Settings then click on the Channels tab
+- Click on +Add Channel
+- Type stm32l072b in the channel name field
+- Check Allow anonymous subscription
+- Click on the check button to create the channel
+
+### Create a sub-domain
+- Click on your username in the top-right corner of the workspace
+- Click on Account then on the Sub-domain tab
+- Enter a sub-domain name
+- Validate by clicking on the check button
+
+### Schedule the /install/storekeeper script
+This script cleans up the documents (records) that are created by the application
+- In the tree view on the left, open the /stm32l072b/installer/storekeeper script
+- In the toolbar, click on the Schedule button
+- In the dialog, click on +Add Trigger, then click on Select then Every
+- Click on Advanced and enter the following cron expression 0/5 * * * ? (will run every 5 minutes)
+- Validate by clicking on the check button
 
 # About the scripts
 
