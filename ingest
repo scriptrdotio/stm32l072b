@@ -66,7 +66,7 @@ function parseData(data) {
     
     // pressure is codes on data[2] and data[3]. If data[3] is empty, only use data[2]
     var jsonData = {};
-    jsonData.pressure = bytesToInt(data[1], data[2], 1);
+    jsonData.pressure = bytesToInt(data[1], data[2], 10);
     jsonData.temperature = bytesToInt(data[3], data[4], 100);
     jsonData.humidity = bytesToInt(data[5], data[6], 10);
     jsonData.batteryLevel = data[7];
