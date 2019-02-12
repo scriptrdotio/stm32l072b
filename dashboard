@@ -261,7 +261,7 @@
 										pointer='false'
 										counter='false'
 										http-method='GET'
-										symbol='dPa'
+										symbol=' dPa'
                                   		on-format-data='vm.gaugeFormatData10'
                            ></scriptr-gauge> </div>
                         </div>
