@@ -81,5 +81,5 @@ function bytesToInt(b1, b2, point) {
     }
     
     var anInt = b1 << 8;
-    return (anInt + b2) / point;
+    return (parseInt(anInt) + parseInt(b2)) / point;
 }
