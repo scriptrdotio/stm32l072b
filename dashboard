@@ -230,7 +230,7 @@
 										api='stm32l072b/latest'
 										value-font-color='#999'
 										min='0'
-										max='250'
+										max='1000'
 										hide-min-max='false'
 										hide-value='false'
 										show-inner-shadow='false'
