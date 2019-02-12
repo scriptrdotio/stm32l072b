@@ -165,7 +165,7 @@
 										pointer='false'
 										counter='false'
 										http-method='GET'
-										symbol='Celsius'
+										symbol=' °C'
                                   		on-format-data='vm.gaugeFormatData8'
                            ></scriptr-gauge> </div>
                         </div>
