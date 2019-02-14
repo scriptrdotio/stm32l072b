@@ -20,11 +20,13 @@
 var document = require("document");
 var config = require("./config");
 var lora = require("lora");
+var log = require("log"); 
+log.setLevel("info");
 
 try {
 	
     // get the payload from the "data" parameter of the request
-    var data = request.parameters.data;
+    var data = request.parameters.data; 
     
     if (request.parameters.decrypted == "false") {        
         data = lora.decrypt(data, config.appsKey);       
@@ -55,7 +57,7 @@ try {
     var messageList = resp.result.documents; 
     
     // publish the historical messages to the dashboard (target all widgets with message tag "historical")
-    publish(config.stm32Channel, {id:"historical", result:messageList});
+    publish("responseChannel", {id:"historical", result:messageList});
     
 }catch(exception) {
     log.error("Could not handle received message.\n"  +  JSON.stringify(exception));
@@ -66,7 +68,7 @@ function parseData(data) {
     
     // pressure is codes on data[2] and data[3]. If data[3] is empty, only use data[2]
     var jsonData = {};
-    jsonData.pressure = bytesToInt(data[1], data[2], 10);
+    jsonData.pressure = bytesToInt(data[1], data[2], 100);
     jsonData.temperature = bytesToInt(data[3], data[4], 100);
     jsonData.humidity = bytesToInt(data[5], data[6], 10);
     jsonData.batteryLevel = data[7];
