@@ -1,0 +1,202 @@
+/**
+ * simple installer application to avoid manually configuring the application
+ * just run the script. 
+ * Logs are displayed in the console and in the log file of your workspace (toolbar > logs)
+ */
+
+var channel = require("channel");
+var subdomain = require("subdomain");
+var device = require("device");
+var document = require("document");
+var config = require("../config");
+var log = require("log");
+log.setLevel("info");
+
+const TOTAL_STEPS = 4;
+const STORE_KEEPING_INTERVAL = 5; // in minutes
+
+var errors = 0;
+var warnings = 0;
+var completedSteps = 0;
+
+// check that config file was customized
+try {
+    verifyConfigFileWasCustomized();
+}catch(abortexception) {
+    return abortexception;
+}
+
+// step 1: create the stm32l072b channel
+createChannel(config.stm32Channel, {subscribeACL: "anonymous", publishACL: "authenticated"});
+
+// step 2: create the dashboard channel
+createChannel(config.dashboardChannel, {subscribeACL: "anonymous", publishACL: "authenticated"});
+
+// step 3: create a sub-domain
+createSubdomain("stm32l072b");
+
+// step 4: schedule the storekeeper to execute regularly
+scheduleStoreKeeper();
+
+if (errors > 0) {
+    return "Installation failed with " + errors + " errors. Please check logs";
+}
+
+if (warnings > 0) {
+
+    if (completedSteps ==  TOTAL_STEPS) {
+        return "Installation successful but reported " + warnings + " warnings. Please check logs";
+    }else {
+        return " Inconsistent state with" + warnings + " warnings. Number of completed tasks is " + completedSteps + " over " + TOTAL_STEPS + ". Please check logs";
+    }    
+}
+
+return "Installation successful. Number of completed tasks is " + completedSteps + " over " + TOTAL_STEPS;
+
+function verifyConfigFileWasCustomized() {
+
+    var missing = [];
+
+    if (!config.appsKey) {
+        missing.push("appsKey");
+    }
+    
+    if (missing.length > 0) {
+        
+        var msg = "installation was aborted because the following were not specifed in stm32l072b/config: \n" +
+            missing.toString() + ".\nPlease make sure to customize the config file with your own settings before launching the install script!";
+        trace(msg);
+        throw {
+            errorCode: "installation_aborted",
+            errorDetail: msg
+        };
+    }
+}
+
+function createChannel(name, options) {
+
+    trace("Creating the " +  name + " channel...");
+    var resp = channel.create(name, options);
+    if (resp.metadata.status == "failure") {
+
+        if (resp.metadata.errorCode == "DUPLICATE_CHANNEL") {
+
+            trace(name + " channel already exists. Skipping this step.", "Warning");            
+            return stepComplete(true);
+        } else {
+
+            trace("Failed to create the " +  name  + " channel. Please try manually.\n" + JSON.stringify(resp), "Error");  
+            return stepFailed();
+        }
+    }else {
+
+        trace("Successfully created the " + name  + " channel.");
+        return stepComplete(false);
+    }
+}
+
+function subscribeScriptToChannel(script, channel) {
+
+    trace("Subscribing " + script + " to channel " + channel + "...");
+    var resp = subscribe(channel, script);
+    if (resp.metadata.status == "failure") {
+
+        if (resp.metadata.errorCode == "CALLBACK_SUBSCRIBED") {
+
+            trace(script +  " already subscribed to " + channel + ". Skipping this step.", "Warning");
+            return stepComplete(true);
+        }else {
+
+            trace("Failed to subscribe " + script +  " to " + channel + ".\n" +  JSON.stringify(resp), "Error");
+            return stepFailed();
+        }
+    }else {        
+
+        trace("Successfully subscribed " + script +  " to " + channel);  
+        return stepComplete(false);
+    }
+}
+
+function createSubdomain(prefix) {
+
+    trace("Creating sub-domain...");
+    var id = guid();
+    var name = config.subdomain ? config.subdomain : prefix + "-" + id;
+    var resp = subdomain.create(name);
+    if (resp.metadata.status == "failure") {
+
+        if (resp.metadata.errorCode == "MAX_SUBDOMAINS_EXCEEDED") {
+
+            trace("A sub-domain already exists. Skipping this step.", "Warning");            
+            return stepComplete(true);
+        }else {
+            trace("Failed to create subdomain " + name + ".\n" +  JSON.stringify(resp), "Error");
+            return stepFailed();
+        }
+    }else {
+        trace("Successfully created subdomain " + name);
+        return stepComplete(false);
+    }
+}
+
+function scheduleStoreKeeper() {
+
+    // do not schedule is script already scheduled
+    trace("Scheduling stm32l072b/installer/storekeeper script to execute regularly...");
+    var resp = document.query({query:'apsST_scriptName = "stm32l072b/installer/storekeeper"', fields:"key"});
+    if (resp.metadata.status == "failure") {
+        trace("Problem occured while checking if storekeeper was scheduled. This might lead to scheduling the script more than once.\n" 
+              + JSON.stringify(resp), "WARNING");
+    }
+
+    if (resp.result.documents.length == 0) {
+
+        resp = schedule("stm32l072b/installer/storekeeper", "0/" +  STORE_KEEPING_INTERVAL + " * * * ?");
+        if (resp.metadata.status == "failure") { 
+
+            trace("Could not schedule the execution of the installer/storekeeper script. Please schedule manually.\n" + JSON.stringify(resp), "Warning");
+            return stepComplete(true);
+        }else {
+
+            trace("stm32l072b/installer/storekeeper script successfully scheduled. Handle is: " + resp.result.handle);
+            return stepComplete(false);
+        }
+    }else {
+
+        trace("storekeeper script already scheduled. Skipping this step.", "Warning");
+        return stepComplete(true);
+    }
+}
+
+function trace(msg, level) {
+
+    log.info(msg); 
+    console.log((level ? level + " - " : "") + msg);
+}
+
+function guid() {
+
+    var choice = "abcdefghijklmnopqrstuvwxyz0123456789";
+    var id = "";
+    for(var i = 0; i < 6; i++) {
+
+        var pick = choice[Math.round(Math.random() * (choice.length - 1))];
+        id += pick
+    }
+
+    return id;
+}
+
+function stepComplete(withWarning) {
+
+    if(withWarning) {
+        warnings++;
+    }
+
+    completedSteps++;
+    return completedSteps;
+}
+
+function stepFailed() {
+    return ++errors;
+}

@@ -1,0 +1,86 @@
+//  --------------------------------------------------------------------------
+// this script receives the http requests that are issued by the multitech gateway on behalf of the STM32072 device
+// it transforms the payload into simple key/value pair data structures to store them in scriptr's storage
+// key/value pairs are then broadcast to the dashboard
+// the script also queries for the latest historical 10 values of temperature, humidity and pressure from the scriptr store and publishes 
+// them to the dashboard as well
+// 
+// The payload is contained in the data parameter of the request.
+// It is an array that has the following structure: 
+// [x, y, z, t, u, v, w, a, 0, 0, 0] 
+// [0], [1]: App LED status
+// [2], [3]: pressure on 2 bytes (value can be read from [2] only)
+// [4], [5]: temperatures on 2 bytes (value can be read from [4] only)
+// [5], [6]: humidity on 2 bytes (value can be read from [2] only)
+// [7]: battery level on 1 byte
+// [8],[9],[10]: fillers, value set to 0 usually
+// --------------------------------------------------------------------------
+
+// the native document module provides data persistence operations (CRUD + querying)
+var document = require("document");
+var config = require("./config");
+var lora = require("lora");
+var log = require("log"); log.setLevel("info");
+
+try {
+	
+    // get the payload from the "data" parameter of the request
+    var data = request.parameters.data; 
+    
+    if (request.parameters.decrypted == "false") {        
+        data = lora.decrypt(data, config.appsKey);       
+    }
+    
+    if (typeof(data) == "string") { 
+        data = JSON.parse(data); // in case we received a stringified array
+    } 
+    
+    // get the payload from the "deviceId" parameter of the request
+    var deviceId = request.parameters.deviceId;    
+    var event = {};           
+    if (data && data.length > 0) {
+        event = parseData(data); 
+    }
+
+	event.deviceId = deviceId;
+    event.type = "stm32l072b";
+        
+    // save the resulting data structure in scriptr's data store
+    document.save(event);
+   
+    // publish the data to the dashboard (target all widgets with message tag "latest")
+    var resp = publish(config.stm32Channel, {id:"latest", result:event}); 
+    
+    // read last historical 10 records (temperature, humidity, pressure) + corresponding date at which they were recorded
+    var resp = document.query({fields:"pressure, temperature, humidity, creationDate", resultsPerPage:10}); 
+    var messageList = resp.result.documents; 
+    
+    // publish the historical messages to the dashboard (target all widgets with message tag "historical")
+    publish("responseChannel", {id:"historical", result:messageList});
+    
+}catch(exception) {
+    log.error("Could not handle received message.\n"  +  JSON.stringify(exception));
+}
+
+// parse the byte buffer and transform back the bytes into ints
+function parseData(data) {
+    
+    // pressure is codes on data[2] and data[3]. If data[3] is empty, only use data[2]
+    var jsonData = {};
+    jsonData.pressure = bytesToInt(data[1], data[2], 100);
+    jsonData.temperature = bytesToInt(data[3], data[4], 100);
+    jsonData.humidity = bytesToInt(data[5], data[6], 10);
+    jsonData.batteryLevel = data[7];
+    return jsonData;
+}
+
+// this reverses the int to bytes conversion that took place on the device
+function bytesToInt(b1, b2, point) {
+    
+    if (!b2) {
+        return b1;
+    }
+    
+    var anInt = b1 << 8;
+    return (parseInt(anInt) + parseInt(b2)) / point;
+}
