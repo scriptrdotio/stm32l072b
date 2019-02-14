@@ -1,8 +1,0 @@
-// Specify your LoRaWAM app key here
-var appsKey = "2B7E151628AED2A6ABF7158809CF4F3C"; // default SEMTECH key
-
-var subdomain = ""; // replace with your own sub-domain name. Make sure it is unique
-
-var stm32Channel = "stm32l072b"; // you can modify this value if you wish
-
-var dashboardChannel = "responseChannel"; // you can modify this value if you wish
