@@ -40,9 +40,12 @@ This channel is used by the dashboard to obtain real-time updates, published by 
 - Click on your username in the top-right corner of the workspace
 - Select Settings then click on the Channels tab
 - Click on +Add Channel
-- Type stm32l072b in the channel name field
+- Type "stm32l072b" in the channel name field
 - Check Allow anonymous subscription
 - Click on the check button to create the channel
+
+### Create the responseChannel channel
+Same as above but enter "responseChannel" in the channel name field
 
 ### Create a sub-domain
 - Click on your username in the top-right corner of the workspace
